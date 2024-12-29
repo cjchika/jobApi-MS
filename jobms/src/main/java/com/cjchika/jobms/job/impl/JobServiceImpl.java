@@ -3,11 +3,16 @@ package com.cjchika.jobms.job.impl;
 import com.cjchika.jobms.job.Job;
 import com.cjchika.jobms.job.JobRepository;
 import com.cjchika.jobms.job.JobService;
+import com.cjchika.jobms.job.dto.JobWithCompanyDTO;
+import com.cjchika.jobms.job.external.Company;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class JobServiceImpl implements JobService {
@@ -15,9 +20,26 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private JobRepository jobRepo;
 
+    private JobWithCompanyDTO convertToDto(Job job){
+        RestTemplate restTemplate = new RestTemplate();
+
+        JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
+
+        jobWithCompanyDTO.setJob(job);
+
+        Company company = restTemplate.getForObject(
+                "http://localhost:8082/api/companies/" + job.getCompanyId(),
+                Company.class);
+        jobWithCompanyDTO.setCompany(company);
+
+        return  jobWithCompanyDTO;
+    }
+
     @Override
-    public List<Job> findAll() {
-        return jobRepo.findAll();
+    public List<JobWithCompanyDTO> findAll() {
+        List<Job> jobs = jobRepo.findAll();
+
+        return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     @Override
