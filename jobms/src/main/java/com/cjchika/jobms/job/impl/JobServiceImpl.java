@@ -19,8 +19,11 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private JobRepository jobRepo;
 
+    @Autowired
+    RestTemplate restTemplate;
+
     private JobWithCompanyDTO convertToDto(Job job){
-        RestTemplate restTemplate = new RestTemplate();
+//        RestTemplate restTemplate = new RestTemplate();
 
         JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
 
@@ -47,8 +50,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job getJobById(Long id) {
-        return jobRepo.findById(id).orElse(null);
+    public JobWithCompanyDTO getJobById(Long id) {
+        Job job =  jobRepo.findById(id).orElse(null);
+
+        return convertToDto(job);
     }
 
     @Override
