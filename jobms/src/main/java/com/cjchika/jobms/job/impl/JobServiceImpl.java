@@ -3,10 +3,14 @@ package com.cjchika.jobms.job.impl;
 import com.cjchika.jobms.job.Job;
 import com.cjchika.jobms.job.JobRepository;
 import com.cjchika.jobms.job.JobService;
-import com.cjchika.jobms.job.dto.JobWithCompanyDTO;
+import com.cjchika.jobms.job.dto.JobDTO;
 import com.cjchika.jobms.job.external.Company;
+import com.cjchika.jobms.job.external.Review;
 import com.cjchika.jobms.job.mapper.JobMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,17 +27,26 @@ public class JobServiceImpl implements JobService {
     @Autowired
     RestTemplate restTemplate;
 
-    private JobWithCompanyDTO convertToDto(Job job){
+    private JobDTO convertToDto(Job job){
 
         Company company = restTemplate.getForObject(
                 "http://companyms:8082/api/companies/" + job.getCompanyId(),
                 Company.class);
 
-        return JobMapper.mapToJobWithCompanyDto(job,company);
+         ResponseEntity<List<Review>> reviewResponse = restTemplate.exchange(
+                 "http://reviewms:8083/api/reviews?companyId=" + job.getCompanyId(),
+                 HttpMethod.GET,
+                 null,
+                 new ParameterizedTypeReference<List<Review>>() {
+                 });
+
+         List<Review> reviews = reviewResponse.getBody();
+
+        return JobMapper.mapToJobWithCompanyDto(job,company, reviews);
     }
 
     @Override
-    public List<JobWithCompanyDTO> findAll() {
+    public List<JobDTO> findAll() {
         List<Job> jobs = jobRepo.findAll();
 
         return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
@@ -45,7 +58,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobWithCompanyDTO getJobById(Long id) {
+    public JobDTO getJobById(Long id) {
         Job job =  jobRepo.findById(id).orElse(null);
 
         return convertToDto(job);
