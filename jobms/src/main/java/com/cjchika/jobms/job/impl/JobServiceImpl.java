@@ -5,6 +5,7 @@ import com.cjchika.jobms.job.JobRepository;
 import com.cjchika.jobms.job.JobService;
 import com.cjchika.jobms.job.dto.JobWithCompanyDTO;
 import com.cjchika.jobms.job.external.Company;
+import com.cjchika.jobms.job.mapper.JobMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,18 +24,12 @@ public class JobServiceImpl implements JobService {
     RestTemplate restTemplate;
 
     private JobWithCompanyDTO convertToDto(Job job){
-//        RestTemplate restTemplate = new RestTemplate();
-
-        JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
-
-        jobWithCompanyDTO.setJob(job);
 
         Company company = restTemplate.getForObject(
                 "http://companyms:8082/api/companies/" + job.getCompanyId(),
                 Company.class);
-        jobWithCompanyDTO.setCompany(company);
 
-        return  jobWithCompanyDTO;
+        return JobMapper.mapToJobWithCompanyDto(job,company);
     }
 
     @Override
