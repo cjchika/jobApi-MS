@@ -27,7 +27,7 @@ public class JobServiceImpl implements JobService {
         jobWithCompanyDTO.setJob(job);
 
         Company company = restTemplate.getForObject(
-                "http://localhost:8082/api/companies/" + job.getCompanyId(),
+                "http://companyms:8082/api/companies/" + job.getCompanyId(),
                 Company.class);
         jobWithCompanyDTO.setCompany(company);
 
