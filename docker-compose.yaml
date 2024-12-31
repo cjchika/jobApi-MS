@@ -29,6 +29,14 @@ services:
       - j-network
     restart: unless-stopped
 
+    zipkin:
+      image: openzipkin/zipkin
+      container_name: zipkin
+      ports:
+        - 9411:9411
+      networks:
+        - j-network
+
 networks:
   j-network:
 
