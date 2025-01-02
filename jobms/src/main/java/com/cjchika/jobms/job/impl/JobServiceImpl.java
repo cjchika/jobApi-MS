@@ -10,10 +10,13 @@ import com.cjchika.jobms.job.external.Company;
 import com.cjchika.jobms.job.external.Review;
 import com.cjchika.jobms.job.mapper.JobMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,20 +36,9 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private ReviewClient reviewClient;
 
+//    private int attempt = 0;
+
     private JobDTO convertToDto(Job job){
-
-//        Company company = restTemplate.getForObject(
-//                "http://companyms:8082/api/companies/" + job.getCompanyId(),
-//                Company.class);
-
-//        ResponseEntity<List<Review>> reviewResponse = restTemplate.exchange(
-//                "http://reviewms:8083/api/reviews?companyId=" + job.getCompanyId(),
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<Review>>() {
-//                });
-
-        //         List<Review> reviews = reviewResponse.getBody();
 
         Company company = companyClient.getCompany(job.getCompanyId());
 
@@ -56,12 +48,21 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @CircuitBreaker(name = "companyBreaker")
+//    @CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
+//    @Retry(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
+    @RateLimiter(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
     public List<JobDTO> findAll() {
+//        System.out.println("Attempt: " + ++attempt);
         List<Job> jobs = jobRepo.findAll();
 
         return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
     }
+
+//    public List<String> companyBreakerFallback(Exception e){
+//        List<String> list = new ArrayList<>();
+//        list.add("Dummy Fallback");
+//        return list;
+//    }
 
     @Override
     public void createJob(Job job) {
