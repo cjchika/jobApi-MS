@@ -3,6 +3,7 @@ package com.cjchika.companyms.company.impl;
 import com.cjchika.companyms.company.Company;
 import com.cjchika.companyms.company.CompanyRepository;
 import com.cjchika.companyms.company.CompanyService;
+import com.cjchika.companyms.dto.ReviewMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +60,10 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         return false;
+    }
+
+    @Override
+    public void updateCompanyRating(ReviewMessage reviewMessage) {
+//ToDo
     }
 }

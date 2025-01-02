@@ -1,5 +1,7 @@
 package com.cjchika.companyms.company;
 
+import com.cjchika.companyms.dto.ReviewMessage;
+
 import java.util.List;
 
 public interface CompanyService {
@@ -13,4 +15,6 @@ public interface CompanyService {
     Company getCompanyById(Long id);
 
     boolean deleteCompanyById(Long id);
+
+    void updateCompanyRating(ReviewMessage reviewMessage);
 }
