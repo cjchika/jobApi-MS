@@ -15,9 +15,6 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @Autowired
-    ReviewMessageConsumer reviewMessageConsumer;
-
     @GetMapping
     public ResponseEntity<List<Company>> getAllCompanies(){
         List<Company> companies = companyService.getAllCompanies();
@@ -42,7 +39,6 @@ public class CompanyController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateCompany(@PathVariable Long id, @RequestBody Company com){
-//        reviewMessageConsumer.consumeMessage();
         boolean updated = companyService.updateCompany(id, com);
 
         if(updated)

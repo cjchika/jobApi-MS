@@ -1,9 +1,6 @@
 package com.cjchika.companyms.company;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
-import java.util.List;
 
 @Entity
 public class Company {
@@ -13,6 +10,7 @@ public class Company {
     private Long id;
     private String name;
     private String description;
+    private Double rating;
 
 //    @JsonIgnore
 //    @OneToMany(mappedBy = "company")
@@ -24,10 +22,11 @@ public class Company {
     public Company() {
     }
 
-    public Company(Long id, String name, String description) {
+    public Company(Long id, String name, String description, Double rating) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.rating = rating;
     }
 
     public Long getId() {
@@ -52,5 +51,13 @@ public class Company {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

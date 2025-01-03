@@ -3,7 +3,9 @@ package com.cjchika.companyms.company.impl;
 import com.cjchika.companyms.company.Company;
 import com.cjchika.companyms.company.CompanyRepository;
 import com.cjchika.companyms.company.CompanyService;
+import com.cjchika.companyms.company.clients.ReviewClient;
 import com.cjchika.companyms.company.dto.ReviewMessage;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyRepository companyRepo;
+
+    @Autowired
+    private ReviewClient reviewClient;
 
     @Override
     public List<Company> getAllCompanies() {
@@ -64,6 +69,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void updateCompanyRating(ReviewMessage reviewMessage) {
-//ToDo
+
+        Company company = companyRepo.findById(reviewMessage.getCompanyId()).orElseThrow(() -> new NotFoundException("Company not found!" + reviewMessage.getCompanyId()));
+
+        double averageRating = reviewClient.getAverageRatingForCompany(reviewMessage.getCompanyId());
+
+        company.setRating(averageRating);
+        companyRepo.save(company);
     }
 }
