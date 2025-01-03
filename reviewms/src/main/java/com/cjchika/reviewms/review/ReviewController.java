@@ -1,6 +1,7 @@
 package com.cjchika.reviewms.review;
 
 
+import com.cjchika.reviewms.review.messaging.ReviewMessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,9 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private ReviewMessageProducer reviewMessageProducer;
+
     @GetMapping("reviews")
     public ResponseEntity<List<Review>> getAllCompanyReviews(@RequestParam Long companyId){
         return new ResponseEntity<>(reviewService.getAllReviews(companyId), HttpStatus.OK);
@@ -25,6 +29,7 @@ public class ReviewController {
        boolean isReviewSaved =  reviewService.addReview(companyId, review);
 
        if(isReviewSaved){
+           reviewMessageProducer.sendMessage(review);
            return new ResponseEntity<>("Review Added Successfully!", HttpStatus.CREATED);
        } else{
            return new ResponseEntity<>("Review not saved!", HttpStatus.BAD_REQUEST);

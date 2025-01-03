@@ -4,7 +4,9 @@ import com.cjchika.reviewms.review.Review;
 import com.cjchika.reviewms.review.dto.ReviewMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ReviewMessageProducer {
 
     @Autowired
@@ -16,11 +18,11 @@ public class ReviewMessageProducer {
 
     public void sendMessage(Review review){
         ReviewMessage reviewMessage = new ReviewMessage();
-        reviewMessage.setId(reviewMessage.getId());
-        reviewMessage.setTitle(reviewMessage.getTitle());
-        reviewMessage.setDescription(reviewMessage.getDescription());
-        reviewMessage.setRating(reviewMessage.getRating());
-        reviewMessage.setCompanyId(reviewMessage.getCompanyId());
+        reviewMessage.setId(review.getId());
+        reviewMessage.setTitle(review.getTitle());
+        reviewMessage.setDescription(review.getDescription());
+        reviewMessage.setRating(review.getRating());
+        reviewMessage.setCompanyId(review.getCompanyId());
         template.convertAndSend("companyRatingQueue", reviewMessage);
     }
 }

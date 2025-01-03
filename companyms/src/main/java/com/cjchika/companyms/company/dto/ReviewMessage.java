@@ -1,4 +1,4 @@
-package com.cjchika.companyms.dto;
+package com.cjchika.companyms.company.dto;
 
 public class ReviewMessage {
     private Long id;

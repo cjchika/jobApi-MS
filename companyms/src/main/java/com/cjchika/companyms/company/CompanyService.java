@@ -1,6 +1,6 @@
 package com.cjchika.companyms.company;
 
-import com.cjchika.companyms.dto.ReviewMessage;
+import com.cjchika.companyms.company.dto.ReviewMessage;
 
 import java.util.List;
 
